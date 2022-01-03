@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from pathlib import Path
-
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,10 +22,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-#otdkyoorf@m!0)32#omttu%(klw8x+@1f7rq)d&c=l_(+hic0'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG',default=True,cast=bool)
 
 ALLOWED_HOSTS = []
 
@@ -83,14 +83,15 @@ AUTH_USER_MODEL = 'user_app.Account'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'social_networknew',
-        'USER':'myprojectuser',
-        'PASSWORD':'password',
-        'HOST':'localhost',
-        'PORT':'5432',
+        'ENGINE': config('ENGINE'),
+        'NAME' : config('DB_NAME'),
+        'USER' : config('DB_USER',cast=str),
+        'PASSWORD' : config('DB_PASSWORD'),
+        'HOST' : config('HOST'),
+        'PORT' : config('PORT'),
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
