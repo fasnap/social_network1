@@ -5,24 +5,62 @@ from post.models import Comment, Post
 from rest_framework import generics, serializers
 from rest_framework import permissions
 from rest_framework.response import Response
-from post.api.permissions import OwnerOnly
+from post.api.permissions import IsOwnerOrPostOwnerOrReadOnly, OwnerOnly
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from .serializers import CommentSerializer
 
-class CommentList(generics.ListCreateAPIView):
-    queryset = Comment.objects.all()
+class AddCommentView(generics.CreateAPIView):
     serializer_class = CommentSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def post(self, request, post_id=None):
+        post = Post.objects.get(pk=post_id)
+        serializer = CommentSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save(post=post, author=self.request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class AddCommentView(generics.CreateAPIView):
+    serializer_class = CommentSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def post(self, request, post_id=None):
+        post = Post.objects.get(pk=post_id)
+        serializer = CommentSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save(post=post, author=self.request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ManageCommentView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = CommentSerializer
+    lookup_url_kwarg = 'comment_id'
+    permission_classes = (IsOwnerOrPostOwnerOrReadOnly,)
+
+    def get_queryset(self):
+        queryset = Comment.objects.all()
+        return queryset
+# class CommentList(generics.ListCreateAPIView):
+#     queryset = Comment.objects.all()
+#     serializer_class = CommentSerializer
+#     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+#     def perform_create(self, serializer):
+#         serializer.save(owner=self.request.user)
         
-class CommentDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly,
-                          OwnerOnly,]
+# class CommentDetail(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = Comment.objects.all()
+#     serializer_class = CommentSerializer
+#     permission_classes = [permissions.IsAuthenticatedOrReadOnly,
+#                           OwnerOnly,]
 
 class AddLikeUnlikeView(APIView):
     permission_classes = [permissions.IsAuthenticated]

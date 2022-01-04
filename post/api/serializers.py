@@ -2,35 +2,57 @@
 from post.models import Comment, Post
 from rest_framework import serializers
 from user_app.api.serializers import AccountSerializer
+from user_app.models import Account
+from django.core.paginator import Paginator
+class AuthorSerializer(serializers.ModelSerializer):
+    """Serializer for object author info"""
 
+    class Meta:
+        model = Account
+        fields = ['username',]
 class CommentSerializer(serializers.ModelSerializer):
-    owner = serializers.ReadOnlyField(source="owner.username")
+    author = AuthorSerializer(read_only=True)
+
     class Meta:
         model = Comment
-        fields = ['id', 'body', 'owner', 'post']
+        fields = ['id', 'body', 'author']
+        read_only_fields = ('author', 'id', 'post_date')
         
 class PostSerializer(serializers.ModelSerializer):
-    author = serializers.PrimaryKeyRelatedField(read_only=True)
-    comments = CommentSerializer(many=True, read_only=True)
+    author = AuthorSerializer(read_only=True)
+    post_image=serializers.ImageField(max_length=None, allow_empty_file=False)
+    post_comments = serializers.SerializerMethodField('paginated_post_comments')
+    # comments = CommentSerializer(many=True, read_only=True)
+    number_of_comments = serializers.SerializerMethodField()
     total_likes = serializers.SerializerMethodField()
-    liked_by = AccountSerializer(many=True,read_only=True)
+    liked_by = serializers.SerializerMethodField()
     class Meta:
         model=Post
         fields = [
             "id",
+            "author",
+            "post_image",
             "title",
             "description",
-            "post_image",
-            "author",
-            "comments",
             "total_likes",
+            "number_of_comments",
+            "post_comments",
             "liked_by",
         ]
     def get_total_likes(self,instance):
         return instance.liked_by.count()
-       
+    
+    def paginated_post_comments(self, obj):
+        post_comments = Comment.objects.all()
+        serializer = CommentSerializer(post_comments, many=True)
 
+        return serializer.data
+    def get_number_of_comments(self, obj):
+        return Comment.objects.filter(post=obj).count()
 
+    def liked_by(self, obj):
+        user = self.context['request'].user
+        return user in obj.liked_by.all()
 
 
 

@@ -15,7 +15,7 @@ class Post(models.Model):
 class Comment(models.Model):
     created=models.DateTimeField(auto_now_add=True)
     body=models.TextField(blank=False,null=False)
-    owner=models.ForeignKey(Account,related_name='comments',on_delete=models.CASCADE)
+    author=models.ForeignKey(Account,related_name='comments',on_delete=models.CASCADE)
     post=models.ForeignKey(Post,related_name='comments',on_delete=models.CASCADE)
  
     class Meta:
