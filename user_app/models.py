@@ -64,11 +64,11 @@ class Account(AbstractBaseUser):
     def has_module_perms(self, add_label):
         return True
 
-class Profile(models.Model):
-    user=models.OneToOneField(Account,on_delete=models.CASCADE,related_name='profile')
-    date_of_birth=models.DateField(blank=True,null=True)
-    bio=models.TextField(max_length=500)
-    photo=models.ImageField(upload_to='profile_photos/',blank=True)
+# class Profile(models.Model):
+#     user=models.OneToOneField(Account,on_delete=models.CASCADE,related_name='profile')
+#     date_of_birth=models.DateField(blank=True,null=True)
+#     bio=models.TextField(max_length=500)
+#     photo=models.ImageField(upload_to='profile_photos/',blank=True)
     
-    def __unicode__(self):
-        return f'Profile for user {self.user.username}'
+#     def __unicode__(self):
+#         return f'Profile for user {self.user.username}'

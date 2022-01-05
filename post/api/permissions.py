@@ -15,7 +15,7 @@ class OwnerOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        if obj.owner == request.user:
+        if obj.author == request.user:
             return True
 
         if request.user.is_staff and request.method not in self.edit_methods:

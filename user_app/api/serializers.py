@@ -1,4 +1,5 @@
-from user_app.models import Account, Profile
+from rest_framework.fields import CharField
+from user_app.models import Account
 from rest_framework import serializers
 
 class ChangePasswordSerializer(serializers.ModelSerializer):
@@ -71,3 +72,16 @@ class AccountSerializer(serializers.ModelSerializer):
         model = Account
         fields = ('email','phone','username','posts','comments')
         
+# class UserProfileChangeSerializer(serializers.ModelSerializer):
+#     username = CharField(required=False, allow_blank=True, initial="current username")
+#     class Meta:
+#         model = Account
+#         fields = [
+#             'username',
+            
+#         ]
+
+#     def update(self, instance, validated_data):
+#         instance.username = validated_data.get('username',instance.username)
+#         print('instance of username',instance.username)
+#         return instance 

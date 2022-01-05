@@ -2,14 +2,15 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from post.api.serializers import  PostSerializer
 from post.models import Comment, Post
-from rest_framework import generics, serializers
+from rest_framework import generics, mixins, serializers
 from rest_framework import permissions
 from rest_framework.response import Response
 from post.api.permissions import IsOwnerOrPostOwnerOrReadOnly, OwnerOnly
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
-from .serializers import CommentSerializer
+from user_app.models import Account
+from .serializers import CommentSerializer, PostUpdateSerializer
 
 class AddCommentView(generics.CreateAPIView):
     serializer_class = CommentSerializer
@@ -49,6 +50,10 @@ class ManageCommentView(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         queryset = Comment.objects.all()
         return queryset
+
+
+
+        
 # class CommentList(generics.ListCreateAPIView):
 #     queryset = Comment.objects.all()
 #     serializer_class = CommentSerializer
@@ -89,10 +94,27 @@ class PostListAV(APIView):
         else:
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
-class PostDetailAV(generics.RetrieveUpdateDestroyAPIView):
+class PostUpdateAV(generics.RetrieveUpdateAPIView):
     permission_classes=(OwnerOnly,permissions.IsAuthenticated,)
-    serializer_class=PostSerializer
+    serializer_class=PostUpdateSerializer
     queryset=Post.objects.all()
    
     def perform_create(self, serializer):
         return serializer.save(author=self.request.user)
+
+class PostDeleteAV(generics.DestroyAPIView):
+    permission_classes=(OwnerOnly,permissions.IsAuthenticated,)
+    serializer_class=PostUpdateSerializer
+    queryset=Post.objects.all()
+   
+    def perform_create(self, serializer):
+        return serializer.save(author=self.request.user)
+
+
+# class PostDetailAV(generics.RetrieveUpdateDestroyAPIView):
+#     permission_classes=(OwnerOnly,permissions.IsAuthenticated,)
+#     serializer_class=PostSerializer
+#     queryset=Post.objects.all()
+   
+#     def perform_create(self, serializer):
+#         return serializer.save(author=self.request.user)
