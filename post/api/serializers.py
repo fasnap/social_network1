@@ -9,7 +9,7 @@ class AuthorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Account
-        fields = ['username',]
+        fields = ['username','id']
 class CommentSerializer(serializers.ModelSerializer):
     author = AuthorSerializer(read_only=True)
 
