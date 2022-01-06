@@ -51,8 +51,8 @@ class ChangePasswordView(generics.UpdateAPIView):
 class UserSearchListView(generics.ListAPIView):
     queryset=Account.objects.all()
     serializer_class = AccountSerializer
+    # filter_backends = (filters.SearchFilter,)
     filter_backends=(filters.DjangoFilterBackend, SearchFilter,)
-    filter_fields = ('username',)
     search_fields=('fullname',)
 
 class UserIsOwnerOrReadOnly(permissions.BasePermission):

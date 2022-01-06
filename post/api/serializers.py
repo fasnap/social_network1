@@ -68,8 +68,14 @@ class PostUpdateSerializer(serializers.ModelSerializer):
             "title",
             "description",
         ]
-   
-
+class PostDeleteSerializer(serializers.ModelSerializer):
+    author = AuthorSerializer(read_only=True)
+    class Meta:
+        model=Post
+        fields = [
+            "id",
+            "author",
+        ]
 
 
 
