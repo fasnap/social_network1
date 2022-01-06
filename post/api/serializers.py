@@ -69,19 +69,19 @@ class PostUpdateSerializer(serializers.ModelSerializer):
             "title",
             "description",
         ]
-class PostDeleteSerializer(serializers.ModelSerializer):
-    author = serializers.SerializerMethodField('author_id')
-    # author = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    class Meta:
-        model=Post
-        fields = [
-            "id",
-            "author",
-        ]
+# class PostDeleteSerializer(serializers.ModelSerializer):
+#     author = serializers.SerializerMethodField('author_id')
+#     # author = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+#     class Meta:
+#         model=Post
+#         fields = [
+#             "id",
+#             "author",
+#         ]
 
-    def author_id(self, obj):
-        author = self.context['request'].user
-        return Account.objects.filter(author=obj)
+#     def author_id(self, obj):
+#         author = self.context['request'].user
+#         return Account.objects.filter(author=obj)
 
 
 

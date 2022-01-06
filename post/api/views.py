@@ -10,7 +10,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from user_app.models import Account
-from .serializers import CommentSerializer, PostDeleteSerializer, PostUpdateSerializer
+from .serializers import CommentSerializer,PostUpdateSerializer
 
 class AddCommentView(generics.CreateAPIView):
     serializer_class = CommentSerializer
@@ -94,27 +94,27 @@ class PostListAV(APIView):
         else:
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
-class PostUpdateAV(generics.RetrieveUpdateAPIView):
+# class PostUpdateAV(generics.RetrieveUpdateAPIView):
+#     permission_classes=(OwnerOnly,permissions.IsAuthenticated,)
+#     serializer_class=PostUpdateSerializer
+#     queryset=Post.objects.all()
+   
+#     def perform_create(self, serializer):
+#         return serializer.save(author=self.request.user)
+
+# class PostDeleteAV(generics.DestroyAPIView):
+#     permission_classes=(OwnerOnly,permissions.IsAuthenticated,)
+#     serializer_class=PostDeleteSerializer
+#     queryset=Post.objects.all()
+   
+    # def perform_create(self, serializer):
+    #     return serializer.save(author=self.request.user)
+
+
+class PostDetailAV(generics.RetrieveUpdateDestroyAPIView):
     permission_classes=(OwnerOnly,permissions.IsAuthenticated,)
     serializer_class=PostUpdateSerializer
     queryset=Post.objects.all()
    
     def perform_create(self, serializer):
         return serializer.save(author=self.request.user)
-
-class PostDeleteAV(generics.DestroyAPIView):
-    permission_classes=(OwnerOnly,permissions.IsAuthenticated,)
-    serializer_class=PostDeleteSerializer
-    queryset=Post.objects.all()
-   
-    # def perform_create(self, serializer):
-    #     return serializer.save(author=self.request.user)
-
-
-# class PostDetailAV(generics.RetrieveUpdateDestroyAPIView):
-#     permission_classes=(OwnerOnly,permissions.IsAuthenticated,)
-#     serializer_class=PostSerializer
-#     queryset=Post.objects.all()
-   
-#     def perform_create(self, serializer):
-#         return serializer.save(author=self.request.user)
