@@ -16,6 +16,7 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ['id', 'body', 'author']
+        required = ['body']
         read_only_fields = ('author', 'id', 'post_date')
         
 class PostSerializer(serializers.ModelSerializer):
@@ -43,7 +44,8 @@ class PostSerializer(serializers.ModelSerializer):
         return instance.liked_by.count()
     
     def paginated_post_comments(self, obj):
-        post_comments = Comment.objects.all()
+        post = Post.objects.get(pk=obj.id)
+        post_comments = Comment.objects.filter(post=post)
         serializer = CommentSerializer(post_comments, many=True)
 
         return serializer.data
