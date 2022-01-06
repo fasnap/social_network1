@@ -60,6 +60,7 @@ class PostSerializer(serializers.ModelSerializer):
 
 class PostUpdateSerializer(serializers.ModelSerializer):
     author = AuthorSerializer(read_only=True)
+    
     class Meta:
         model=Post
         fields = [
@@ -69,7 +70,8 @@ class PostUpdateSerializer(serializers.ModelSerializer):
             "description",
         ]
 class PostDeleteSerializer(serializers.ModelSerializer):
-    author = AuthorSerializer(read_only=True)
+    author = serializers.SerializerMethodField('user_id')
+    # author = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     class Meta:
         model=Post
         fields = [
@@ -77,6 +79,9 @@ class PostDeleteSerializer(serializers.ModelSerializer):
             "author",
         ]
 
+    def author_id(self, obj):
+        author = self.context['request'].user
+        return Account.objects.filter(author=obj)
 
 
 
