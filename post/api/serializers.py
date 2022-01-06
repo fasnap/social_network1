@@ -70,7 +70,7 @@ class PostUpdateSerializer(serializers.ModelSerializer):
             "description",
         ]
 class PostDeleteSerializer(serializers.ModelSerializer):
-    author = serializers.SerializerMethodField('user_id')
+    author = serializers.SerializerMethodField('author_id')
     # author = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     class Meta:
         model=Post
